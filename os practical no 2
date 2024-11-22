@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Initialize a mutex to 1
+int mutex = 1;
+
+// Number of full slots
+int full = 0;
+
+// Number of empty slots as size of buffer
+int empty = 10;
+
+// Shared variable for item count
+int x = 0;
+
+// Function to produce an item and add it to the buffer
+void producer() {
+    // Decrease mutex value by 1
+    --mutex;
+
+    // Increase the number of full slots by 1
+    ++full;
+
+    // Decrease the number of empty slots by 1
+    --empty;
+
+    // Item produced
+    x++;
+    printf("\nProducer produces item %d", x);
+
+    // Increase mutex value by 1
+    ++mutex;
+}
+
+// Function to consume an item and remove it from the buffer
+void consumer() {
+    // Decrease mutex value by 1
+    --mutex;
+
+    // Decrease the number of full slots by 1
+    --full;
+
+    // Increase the number of empty slots by 1
+    ++empty;
+
+    printf("\nConsumer consumes item %d", x);
+    x--;
+
+    // Increase mutex value by 1
+    ++mutex;
+}
+
+// Driver Code
+int main() {
+    int n;
+
+    printf("1. Press 1 for Producer\n");
+    printf("2. Press 2 for Consumer\n");
+    printf("3. Press 3 for Exit\n");
+
+    while (1) {
+        printf("\nEnter your choice: ");
+        scanf("%d", &n);
+
+        // Switch Cases
+        switch (n) {
+            case 1:
+                // If mutex is 1 and empty is non-zero, then it is possible to produce
+                if (mutex == 1 && empty != 0) {
+                    producer();
+                } else {
+                    printf("\nBuffer is full!");
+                }
+                break;
+
+            case 2:
+                // If mutex is 1 and full is non-zero, then it is possible to consume
+                if (mutex == 1 && full != 0) {
+                    consumer();
+                } else {
+                    printf("\nBuffer is empty!");
+                }
+                break;
+
+            case 3:
+                // Exit condition
+                exit(0);
+
+            default:
+                printf("\nInvalid choice! Please enter 1, 2, or 3.");
+        }
+    }
+
+    return 0;
+}
